@@ -1,4 +1,4 @@
-export function createSpaces(spaces = 1) {
+export function createSpaces(spaces: number = 1): string {
   let str = "";
   let idx = 0;
   while (idx < spaces) {

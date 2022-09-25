@@ -2,8 +2,6 @@ import chalk from "chalk";
 import { Command } from "commander";
 import inquirer from "inquirer";
 
-import packageJson from "../package.json";
-
 import AWSProfiler from "./AwsProfiler";
 import { createSpaces } from "./util";
 import { Print } from "./util/Print";
@@ -14,8 +12,8 @@ const cli = new Command();
 
 cli
   .name("awsii")
-  .description(packageJson.description)
-  .version(packageJson.version);
+  .description("CLI to set named aws profiles to the default aws profile")
+  .version("0.0.1");
 
 cli.option(
   "-p, --path <path>",
@@ -86,17 +84,17 @@ cli
         },
       ])
       .then(({ profileName }) => {
-        Print.log(' ')
+        Print.log(" ");
         switchProfile(awsProfiler, profileName);
       });
   });
 
-function switchProfile(awsProfiler, newProfile) {
-  awsProfiler.selectProfile(newProfile);
+function switchProfile(awsProfiler: AWSProfiler, profileName: string) {
+  awsProfiler.selectProfile(profileName);
   awsProfiler.saveProfile();
   Print.info(
     chalk.white("Default profile switched to: "),
-    chalk.cyan(newProfile)
+    chalk.cyan(profileName)
   );
 }
 

@@ -1,16 +1,23 @@
 import { homedir } from "os";
 import { resolve } from "path";
-import { existsSync } from "fs";
+import { existsSync, PathLike } from "fs";
 import { createIniConfig, readConfig, writeConfig } from "./util/IniConfig";
 import { Print } from "./util/Print";
 import { exit } from "process";
 
-class AWSProfiler {
-  configPath = null;
-  config = null;
-  defaultProfileName = null;
+type Config = {
+  [key: string]: {
+    aws_access_key_id: string;
+    aws_secret_access_key: string;
+  };
+};
 
-  constructor(awsCredentialsPath = null) {
+class AWSProfiler {
+  configPath: PathLike = "";
+  config: Config = {};
+  defaultProfileName: string = "";
+
+  constructor(awsCredentialsPath: PathLike) {
     this.configPath = awsCredentialsPath;
     if (!existsSync(this.configPath)) {
       Print.error("AWS credentials file could not be found.");
@@ -20,7 +27,7 @@ class AWSProfiler {
     this.config = readConfig(this.configPath);
   }
 
-  findCurrentProfile() {
+  findCurrentProfile(): string {
     for (let profile in this.config) {
       if (
         profile !== "default" &&
@@ -31,10 +38,10 @@ class AWSProfiler {
         return profile;
       }
     }
-    return null;
+    return "";
   }
 
-  createProfileList(appendToCurrent = "") {
+  createProfileList(appendToCurrent: string = ""): string[] {
     const profiles = [];
     for (let profile of Object.keys(this.config)) {
       if (profile !== "default") {
@@ -48,17 +55,17 @@ class AWSProfiler {
     return profiles;
   }
 
-  selectProfile(name) {
+  selectProfile(name: string): string {
     this.config.default = this.config[name];
     return `Default profile set to '${name}'`;
   }
 
-  saveProfile() {
+  saveProfile(): void {
     const iniConfig = createIniConfig(this.config);
     writeConfig(this.configPath, iniConfig);
   }
 
-  static getDefaultConfigPath() {
+  static getDefaultConfigPath(): string {
     return resolve(homedir(), ".aws", "credentials");
   }
 }
