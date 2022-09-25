@@ -1,0 +1,40 @@
+{
+  "name": "awsii",
+  "description": "CLI to use switch between the aws-cli default profile",
+  "version": "0.0.1",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "package": "yarn build && pkg dist/main.js -c=package.json",
+    "build": "NODE_ENV=production webpack",
+    "test": "jest"
+  },
+  "dependencies": {
+    "chalk": "^5.0.1",
+    "commander": "^9.4.0",
+    "ini": "^3.0.1",
+    "inquirer": "^9.1.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.19.1",
+    "@babel/preset-env": "^7.19.1",
+    "ava": "^4.3.3",
+    "babel-loader": "^8.2.5",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-node-externals": "^3.0.0"
+  },
+  "pkg": {
+    "options": [
+      "experimental-modules"
+    ],
+    "targets": [
+      "node16-macos-x64",
+      "node16-macos-arm64",
+      "node16-win-x64",
+      "node16-linux-x64",
+      "node16-linux-arm64"
+    ],
+    "outputPath": "package"
+  }
+}
