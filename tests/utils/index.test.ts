@@ -1,13 +1,10 @@
-import { createSpaces } from "../src/utils";
+import test from "ava";
+import { createSpaces } from "../../src/utils";
 
-test("create one space", () => {
-  expect(createSpaces()).toBe(" ");
+test("create 2 spaces", (t) => {
+  t.is("  ", createSpaces(2));
 });
 
-test("create one space", () => {
-  expect(createSpaces()).toBe(" ");
-});
-
-test("create 2 spaces", () => {
-  expect(createSpaces(2)).toBe("  ");
+test("create 1 space", (t) => {
+  t.is(" ", createSpaces(1));
 });
