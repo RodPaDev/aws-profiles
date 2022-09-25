@@ -8,4 +8,3 @@ Features:
 - [ ] Add new set of credentials
 - [ ] Edit set of credentials
 - [ ] Delete set of credentials
-
