@@ -3,8 +3,8 @@ import { Command } from "commander";
 import inquirer from "inquirer";
 
 import AWSProfiler from "./AwsProfiler";
-import { createSpaces } from "./util";
-import { Print } from "./util/Print";
+import { createSpaces } from "./utils";
+import { Print } from "./utils/Print";
 
 const defaultPath = AWSProfiler.getDefaultConfigPath();
 

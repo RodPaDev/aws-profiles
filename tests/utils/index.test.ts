@@ -1,4 +1,4 @@
-import { createSpaces } from "../../src/util";
+import { createSpaces } from "../src/utils";
 
 test("create one space", () => {
   expect(createSpaces()).toBe(" ");

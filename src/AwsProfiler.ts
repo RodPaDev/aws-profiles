@@ -1,8 +1,8 @@
 import { homedir } from "os";
 import { resolve } from "path";
 import { existsSync, PathLike } from "fs";
-import { createIniConfig, readConfig, writeConfig } from "./util/IniConfig";
-import { Print } from "./util/Print";
+import { createIniConfig, readConfig, writeConfig } from "./utils/IniConfig";
+import { Print } from "./utils/Print";
 import { exit } from "process";
 
 type Config = {
