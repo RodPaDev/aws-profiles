@@ -1,5 +1,5 @@
 import { encode, parse } from 'ini'
-import { PathLike, readFileSync, writeFileSync } from 'fs'
+import { readFileSync, writeFileSync } from 'fs'
 
 export type Config = {
   [key: string]: {
@@ -8,11 +8,11 @@ export type Config = {
   }
 }
 
-export function readConfig(path: PathLike): Config {
+export function readConfig(path: string): Config {
   return parse(readFileSync(path, { encoding: 'utf-8' }))
 }
 
-export function writeConfig(path: PathLike, iniConfig: string): void {
+export function writeConfig(path: string, iniConfig: string): void {
   writeFileSync(path, iniConfig, { encoding: 'utf-8' })
 }
 

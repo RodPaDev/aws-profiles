@@ -1,6 +1,6 @@
 import { homedir } from 'os'
-import { resolve } from 'path'
-import { existsSync, PathLike } from 'fs'
+import path from 'path'
+import { existsSync } from 'fs'
 import {
   Config,
   createIniConfig,
@@ -11,27 +11,42 @@ import { Print } from './utils/Print'
 import { exit } from 'process'
 
 class AWSProfiler {
-  configPath: PathLike
+  configPath: {
+    credenetials: string
+    config: string
+  }
   config: Config
+  credentials: Config
   defaultProfileName: string
 
-  constructor(awsCredentialsPath: PathLike) {
-    this.configPath = awsCredentialsPath
-    if (!existsSync(this.configPath)) {
+  constructor(configDir: string) {
+    const config = path.join(configDir, 'config')
+    const credenetials = path.join(configDir, 'credentials')
+    this.configPath = {
+      config,
+      credenetials
+    }
+
+    if (!existsSync(this.configPath.credenetials)) {
       Print.error('AWS credentials file could not be found.')
       exit(1)
     }
+    if (!existsSync(this.configPath.config)) {
+      Print.error('AWS config file could not be found.')
+      exit(1)
+    }
 
-    this.config = readConfig(this.configPath)
+    this.config = readConfig(this.configPath.config)
+    this.credentials = readConfig(this.configPath.credenetials)
     this.defaultProfileName = ''
   }
 
   findCurrentProfile(): string {
-    for (const profile in this.config) {
+    for (const profile in this.credentials) {
       if (
         profile !== 'default' &&
-        this.config[profile].aws_access_key_id ===
-          this.config.default.aws_access_key_id
+        this.credentials[profile].aws_access_key_id ===
+          this.credentials.default.aws_access_key_id
       ) {
         this.defaultProfileName = profile
         return profile
@@ -42,7 +57,7 @@ class AWSProfiler {
 
   createProfileList(appendToCurrent = ''): string[] {
     const profiles = []
-    for (const profile of Object.keys(this.config)) {
+    for (const profile of Object.keys(this.credentials)) {
       if (profile !== 'default') {
         if (profile === this.defaultProfileName) {
           profiles.unshift(profile + appendToCurrent)
@@ -54,18 +69,21 @@ class AWSProfiler {
     return profiles
   }
 
-  selectProfile(name: string): string {
+  setDefaultProfile(name: string): string {
     this.config.default = this.config[name]
+    this.credentials.default = this.credentials[name]
     return `Default profile set to '${name}'`
   }
 
   saveProfile(): void {
     const iniConfig = createIniConfig(this.config)
-    writeConfig(this.configPath, iniConfig)
+    const iniCredentials = createIniConfig(this.credentials)
+    writeConfig(this.configPath.config, iniConfig)
+    writeConfig(this.configPath.credenetials, iniCredentials)
   }
 
-  static getDefaultConfigPath(): string {
-    return resolve(homedir(), '.aws', 'credentials')
+  static getDefaultConfigDirPath(): string {
+    return path.resolve(homedir(), '.aws')
   }
 }
 
