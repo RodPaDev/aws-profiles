@@ -6,8 +6,7 @@ import AWSProfiler from './AwsProfiler'
 import { createSpaces } from './utils'
 import { Print } from './utils/Print'
 
-const defaultPath = AWSProfiler.getDefaultConfigPath()
-
+const defaultDirPath = AWSProfiler.getDefaultConfigDirPath()
 const cli = new Command()
 
 cli
@@ -17,8 +16,8 @@ cli
 
 cli.option(
   '-p, --path <path>',
-  'Custom path to the aws-cli credentials file.',
-  defaultPath
+  'Custom path to the aws-cli config folder.',
+  defaultDirPath
 )
 
 const global = cli.opts()
@@ -61,9 +60,9 @@ cli
 
 cli
   .command('where')
-  .description('Print the path to the aws credentials file')
+  .description('Print the path to the aws config folder.')
   .action(() => {
-    Print.info(chalk.greenBright('Path:'), chalk.white(defaultPath))
+    Print.info(chalk.greenBright('Path:'), chalk.white(defaultDirPath))
   })
 
 cli
@@ -90,7 +89,7 @@ cli
   })
 
 function switchProfile(awsProfiler: AWSProfiler, profileName: string) {
-  awsProfiler.selectProfile(profileName)
+  awsProfiler.setDefaultProfile(profileName)
   awsProfiler.saveProfile()
   Print.info(
     chalk.white('Default profile switched to: '),
