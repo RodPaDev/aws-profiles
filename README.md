@@ -4,7 +4,7 @@ CLI to set named profiles to the default aws profile
 
 Features:
 - [x] Switch credentials profile
-- [ ] Switch config profile
-- [ ] Add new set of credentials
-- [ ] Edit set of credentials
-- [ ] Delete set of credentials
+- [x] Switch config profile
+- [ ] Add new set of credentials & config
+- [ ] Edit set of credentials & config
+- [ ] Delete set of credentials & config
