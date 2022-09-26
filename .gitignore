@@ -90,4 +90,6 @@ src/scss/_themes.scss
 # We generate our own .eleventyignore file dynamically during builds
 .eleventyignore
 
+# release
 package/
+build/

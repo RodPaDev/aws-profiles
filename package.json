@@ -7,8 +7,7 @@
   "scripts": {
     "package": "yarn build && pkg dist/main.js -c=package.json",
     "build": "NODE_ENV=production webpack",
-    "test": "ava",
-    "ts-build": "tsc"
+    "test": "ava"
   },
   "dependencies": {
     "chalk": "^5.0.1",
@@ -21,7 +20,10 @@
     "@types/inquirer": "^9.0.1",
     "@types/jest": "^29.0.3",
     "@types/node": "^18.7.20",
+    "@typescript-eslint/eslint-plugin": "^5.38.1",
+    "@typescript-eslint/parser": "^5.38.1",
     "ava": "^4.3.3",
+    "eslint": "^8.24.0",
     "ts-jest": "^29.0.2",
     "ts-loader": "^9.4.1",
     "ts-node": "^10.9.1",
