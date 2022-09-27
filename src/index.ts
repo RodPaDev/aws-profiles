@@ -59,10 +59,15 @@ cli
   })
 
 cli
-  .command('where')
-  .description('Print the path to the aws config folder.')
+  .command('current')
+  .description("Display the current Default Profile's name")
   .action(() => {
-    Print.info(chalk.greenBright('Path:'), chalk.white(defaultDirPath))
+    const awsProfiler = new AWSProfiler(global.path)
+    awsProfiler.findCurrentProfile()
+    Print.info(
+      'Current default aws profile: ',
+      chalk.cyan(awsProfiler.defaultProfileName)
+    )
   })
 
 cli
