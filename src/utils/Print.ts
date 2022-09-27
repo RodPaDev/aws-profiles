@@ -6,13 +6,13 @@ export class Print {
     console.log(...args)
   }
   static error(...args: unknown[]) {
-    console.error(chalk.redBright('Error: ', ...args))
+    console.error(chalk.redBright('\u274C'), chalk.white(...args))
   }
   static info(...args: unknown[]) {
-    console.info(...args)
+    console.info(chalk.green('\u2713'), chalk.white(...args))
   }
   static warn(...args: unknown[]) {
-    console.warn(...args)
+    console.warn(chalk.yellow('\u26A0'), chalk.white(...args))
   }
   /* eslint-enable no-console */
 }
