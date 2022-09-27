@@ -1,22 +1,35 @@
 import { homedir } from 'os'
 import path from 'path'
 import { existsSync } from 'fs'
-import {
-  Config,
-  createIniConfig,
-  readConfig,
-  writeConfig
-} from './utils/IniConfig'
+import { createIniConfig, readConfig, writeConfig } from './utils/IniConfig'
 import { Print } from './utils/Print'
 import { exit } from 'process'
+
+type CredentialsObject = {
+  aws_access_key_id: string
+  aws_secret_access_key: string
+}
+
+type ConfigObject = {
+  region: string
+  output: string
+}
+
+type CredentialsMap = {
+  [key: string]: CredentialsObject
+}
+
+type ConfigMap = {
+  [key: string]: ConfigObject
+}
 
 class AWSProfiler {
   configPath: {
     credenetials: string
     config: string
   }
-  config: Config
-  credentials: Config
+  config: ConfigMap
+  credentials: CredentialsMap
   defaultProfileName: string
 
   constructor(configDir: string) {
@@ -36,8 +49,8 @@ class AWSProfiler {
       exit(1)
     }
 
-    this.config = readConfig(this.configPath.config)
-    this.credentials = readConfig(this.configPath.credenetials)
+    this.config = <ConfigMap>readConfig(this.configPath.config)
+    this.credentials = <CredentialsMap>readConfig(this.configPath.credenetials)
     this.defaultProfileName = ''
   }
 
@@ -80,6 +93,20 @@ class AWSProfiler {
     const iniCredentials = createIniConfig(this.credentials)
     writeConfig(this.configPath.config, iniConfig)
     writeConfig(this.configPath.credenetials, iniCredentials)
+  }
+
+  addProfile(
+    credentials: CredentialsObject,
+    config: ConfigObject,
+    profileName: string
+  ): void {
+    this.config[profileName] = config
+    this.credentials[profileName] = credentials
+  }
+
+  deleteProfile(profileName: string): void {
+    delete this.config[profileName]
+    delete this.credentials[profileName]
   }
 
   static getDefaultConfigDirPath(): string {
