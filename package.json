@@ -1,7 +1,7 @@
 {
   "name": "aws-profiles",
   "description": "CLI to manage aws-cli profiles",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "main": "src/index.ts",
   "license": "MIT",
   "scripts": {
