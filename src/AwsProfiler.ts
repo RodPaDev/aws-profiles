@@ -104,6 +104,13 @@ class AWSProfiler {
     this.credentials[profileName] = credentials
   }
 
+  getCaseInsensitiveProfileName(profileName: string): string | undefined {
+    const keys = Object.keys(this.config)
+    return keys.find(
+      key => key.toLocaleLowerCase() === profileName.toLocaleLowerCase()
+    )
+  }
+
   deleteProfile(profileName: string): void {
     delete this.config[profileName]
     delete this.credentials[profileName]
