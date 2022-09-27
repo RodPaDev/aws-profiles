@@ -9,6 +9,7 @@
     "declarationMap": true,
     "outDir": "./dist",
     "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
     "strict": true,
     "noImplicitAny": true,
     "alwaysStrict": true,
