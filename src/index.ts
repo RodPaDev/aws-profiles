@@ -3,19 +3,16 @@ import { Command } from 'commander'
 import inquirer from 'inquirer'
 import { exit } from 'process'
 
-import AWSProfiler from './AwsProfiler'
+import AwsProfileManager from './AwsProfileManager'
 import { createSpaces } from './utils'
 import { Print } from './utils/Print'
 
-// const defaultDirPath = AWSProfiler.getDefaultConfigDirPath()
-const defaultDirPath =
-  '/Users/rodpadev/Desktop/projects/aws-profile-switcher/tests/config'
+import config from './config.json'
+
+const defaultDirPath = AwsProfileManager.getDefaultConfigDirPath()
 const cli = new Command()
 
-cli
-  .name('awsii')
-  .description('CLI to set named aws profiles to the default aws profile')
-  .version('0.0.1')
+cli.name(config.name).description(config.description).version(config.version)
 
 cli.option(
   '-p, --path <path>',
@@ -29,16 +26,16 @@ cli
   .command('list')
   .description('List all profiles')
   .action(() => {
-    const awsProfiler = new AWSProfiler(global.path)
+    const awsProfiler = new AwsProfileManager(global.path)
     awsProfiler.findCurrentProfile()
     const profiles = awsProfiler.createProfileList()
     Print.info('List of aws profiles:')
     let index = 0
     for (const profile of profiles) {
       if (index === 0) {
-        Print.info(createSpaces(2), chalk.cyan(`- ${profile} [Default]`))
+        Print.log(createSpaces(2), chalk.cyan(`- ${profile} [Default]`))
       } else {
-        Print.info(createSpaces(2), chalk.white(`- ${profile}`))
+        Print.log(createSpaces(2), chalk.white(`- ${profile}`))
       }
       index += 1
     }
@@ -49,7 +46,7 @@ cli
   .description('Select a profile to select as the default aws profile')
   .argument('<profile-name>', 'Profile name')
   .action(profileName => {
-    const awsProfiler = new AWSProfiler(global.path)
+    const awsProfiler = new AwsProfileManager(global.path)
     const profile = awsProfiler.findCurrentProfile()
     const originalProfileName =
       awsProfiler.getCaseInsensitiveProfileName(profileName)
@@ -73,7 +70,7 @@ cli
   .command('current')
   .description("Display the current Default Profile's name")
   .action(() => {
-    const awsProfiler = new AWSProfiler(global.path)
+    const awsProfiler = new AwsProfileManager(global.path)
     awsProfiler.findCurrentProfile()
     Print.info(
       'Current default aws profile: ',
@@ -85,7 +82,7 @@ cli
   .command('choose')
   .description('Choose a profile from an interactive shell')
   .action(() => {
-    const awsProfiler = new AWSProfiler(global.path)
+    const awsProfiler = new AwsProfileManager(global.path)
     awsProfiler.findCurrentProfile()
     const [current, ...choices] = awsProfiler.createProfileList()
     Print.info('Current default aws profile: ', chalk.cyan(current))
@@ -99,7 +96,6 @@ cli
         }
       ])
       .then(({ profileName }) => {
-        Print.log(' ')
         switchProfile(awsProfiler, profileName)
       })
   })
@@ -108,7 +104,7 @@ cli
   .command('add')
   .description('Add a new aws profile')
   .action(() => {
-    const awsProfiler = new AWSProfiler(global.path)
+    const awsProfiler = new AwsProfileManager(global.path)
     awsProfiler.findCurrentProfile()
     inquirer
       .prompt([
@@ -166,17 +162,50 @@ cli
             switchProfile(awsProfiler, name, false)
             Print.info(
               'New aws profile added and set as default:',
-              chalk.cyan(chalk.cyan(name))
+              chalk.cyan(name)
             )
           } else {
-            Print.info('New aws profile added:', chalk.cyan(chalk.cyan(name)))
+            Print.info('New aws profile added:', chalk.cyan(name))
           }
         }
       )
   })
 
+cli
+  .command('delete')
+  .description('Delete a aws profile')
+  .argument('<profile-name>', 'Profile name')
+  .action(profileName => {
+    const awsProfiler = new AwsProfileManager(global.path)
+    if (!awsProfiler.getCaseInsensitiveProfileName(profileName)) {
+      Print.error('Profile does not exist')
+      exit(1)
+    }
+    inquirer
+      .prompt([
+        {
+          type: 'confirm',
+          name: 'confirm',
+          message: chalk.yellow(
+            'This action is irreversible. Are you sure you want to delete?'
+          ),
+          default: false,
+          prefix: chalk.yellow('!')
+        }
+      ])
+      .then(({ confirm }) => {
+        awsProfiler.deleteProfile(profileName)
+        if (confirm) {
+          awsProfiler.saveProfile()
+          Print.info('AWS Profile deleted:', chalk.cyan(profileName))
+        } else {
+          Print.info('AWS Profile was not deleted:', chalk.cyan(profileName))
+        }
+      })
+  })
+
 function switchProfile(
-  awsProfiler: AWSProfiler,
+  awsProfiler: AwsProfileManager,
   profileName: string,
   print = true
 ) {
