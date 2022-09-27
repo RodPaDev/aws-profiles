@@ -1,8 +1,8 @@
 {
-  "name": "awsii",
-  "description": "CLI to use switch between the aws-cli default profile",
-  "version": "0.0.1",
-  "main": "index.js",
+  "name": "aws-profiles",
+  "description": "CLI to manage aws-cli profiles",
+  "version": "1.0.0",
+  "main": "src/index.ts",
   "license": "MIT",
   "scripts": {
     "package": "yarn build && pkg dist/main.js -c=package.json",

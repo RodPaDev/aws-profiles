@@ -1,5 +1,16 @@
 import webpack from 'webpack'
 import path from 'path'
+import { writeFileSync } from 'fs'
+
+import { name, version, description } from './package.json'
+
+console.log('Copying CLI config')
+writeFileSync(
+  path.resolve(__dirname, 'src', 'config.json'),
+  JSON.stringify({ name, version, description }, null, 2),
+  { encoding: 'utf-8' }
+)
+console.log('Finished Copy CLI config')
 
 const config: webpack.Configuration = {
   entry: './src/index.ts',
