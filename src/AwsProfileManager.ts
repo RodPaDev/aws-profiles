@@ -23,7 +23,7 @@ type ConfigMap = {
   [key: string]: ConfigObject
 }
 
-class AWSProfiler {
+class AwsProfileManager {
   configPath: {
     credenetials: string
     config: string
@@ -121,4 +121,4 @@ class AWSProfiler {
   }
 }
 
-export default AWSProfiler
+export default AwsProfileManager
