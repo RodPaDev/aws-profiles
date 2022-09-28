@@ -12,6 +12,12 @@ I'm aware I can use named profiles and specify which profile I want to use but I
 
 For now there is no way of installing other than running the JS script with node.
 
+```
+git clone git@github.com:RodPaDev/aws-profiles.git
+yarn build
+node build/main.js [options] [command]
+```
+
 The goal however is to use `pkg` to create binaries to distribute for different platforms.
 
 I also intend on publishing these binaries on `homebrew`, `chocolatey`, & need to figure what the best option if for `linux`.
