@@ -52,6 +52,15 @@ class AwsProfileManager {
     this.config = <ConfigMap>readConfig(this.configPath.config)
     this.credentials = <CredentialsMap>readConfig(this.configPath.credenetials)
     this.defaultProfileName = ''
+
+    const sortedConfigKeys = Object.keys(this.config).sort().toString()
+    const sortedCredentialsKeys = Object.keys(this.credentials).sort().toString()
+
+    if(sortedConfigKeys !== sortedCredentialsKeys){
+      Print.error('Config and Credentials files are broken please verify that all profiles exist in both files')
+      exit(1)
+    }
+
   }
 
   findCurrentProfile(): string {
