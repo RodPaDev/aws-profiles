@@ -26,7 +26,6 @@ Perhaps make it installable via `apt` & `pacman` and for distros that use other 
 
 ## Usage
 
-To display help and list all the
 
 To select a profile run:
 
