@@ -8,9 +8,15 @@ import { createSpaces } from './utils'
 import { Print } from './utils/Print'
 
 import config from './config.json'
+import CliConfigManager from './utils/CliConfig'
+import { existsSync } from 'fs'
 
-const defaultDirPath = AwsProfileManager.getDefaultConfigDirPath()
+// const defaultDirPath = AwsProfileManager.getDefaultConfigDirPath()
+const defaultDirPath =
+  '/Users/rodpadev/Desktop/projects/aws-profile-switcher/tests/config'
+
 const cli = new Command()
+const cliConfigManager = new CliConfigManager()
 
 cli.name(config.name).description(config.description).version(config.version)
 
@@ -19,8 +25,14 @@ cli.option(
   'Custom path to the aws-cli config folder.',
   defaultDirPath
 )
+cli.parse()
 
 const global = cli.opts()
+
+if (global.path !== defaultDirPath && existsSync(global.path)) {
+  cliConfigManager.setCustomPath(global.path)
+  cliConfigManager.save()
+}
 
 cli
   .command('list')
@@ -50,6 +62,11 @@ cli
     const profile = awsProfiler.findCurrentProfile()
     const originalProfileName =
       awsProfiler.getCaseInsensitiveProfileName(profileName)
+
+    if (originalProfileName === 'default') {
+      Print.error('Cannot select', chalk.cyan('default'), 'profile')
+      exit(1)
+    }
 
     if (!originalProfileName) {
       Print.error('Profile does not exist')
@@ -177,10 +194,17 @@ cli
   .argument('<profile-name>', 'Profile name')
   .action(profileName => {
     const awsProfiler = new AwsProfileManager(global.path)
-    if (!awsProfiler.getCaseInsensitiveProfileName(profileName)) {
+    const originalProfileName =
+      awsProfiler.getCaseInsensitiveProfileName(profileName)
+    if (!originalProfileName) {
       Print.error('Profile does not exist')
       exit(1)
     }
+    if (originalProfileName === 'default') {
+      Print.error('Cannot delete', chalk.cyan('default'), 'profile')
+      exit(1)
+    }
+
     inquirer
       .prompt([
         {
