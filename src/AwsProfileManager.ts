@@ -54,13 +54,33 @@ class AwsProfileManager {
     this.defaultProfileName = ''
 
     const sortedConfigKeys = Object.keys(this.config).sort().toString()
-    const sortedCredentialsKeys = Object.keys(this.credentials).sort().toString()
+    const sortedCredentialsKeys = Object.keys(this.credentials)
+      .sort()
+      .toString()
 
-    if(sortedConfigKeys !== sortedCredentialsKeys){
-      Print.error('Config and Credentials files are broken please verify that all profiles exist in both files')
+    if (sortedConfigKeys.length === 0) {
+      Print.error(
+        'Config file is empty.',
+        'Please verify that all profiles exist in both files.'
+      )
       exit(1)
     }
 
+    if (sortedCredentialsKeys.length === 0) {
+      Print.error(
+        'Credentials file is empty.',
+        'Please verify that all profiles exist in both file.'
+      )
+      exit(1)
+    }
+
+    if (sortedConfigKeys !== sortedCredentialsKeys) {
+      Print.error(
+        'Config and Credentials files are broken.',
+        'Please verify that all profiles exist in both files.'
+      )
+      exit(1)
+    }
   }
 
   findCurrentProfile(): string {
