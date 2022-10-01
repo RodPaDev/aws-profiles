@@ -13,7 +13,7 @@ I'm aware I can use named profiles and specify which profile I want to use but I
 
 1. Go to release and download the zip matching your os & architecture
 2. Unzip to `/usr/local/bin` or if you're on windows `C:\Program Files\aws-profiles`
-3. If you're on windows you need to [add the program to path](https://gist.github.com/RodPaDev/e9365fbb6f0c5d8553ceb84ad87110b1.js)
+3. If you're on windows you need to [add the program to path](https://gist.github.com/RodPaDev/e9365fbb6f0c5d8553ceb84ad87110b1)
 
 
 >I intend on publishing these binaries on `homebrew`, `chocolatey`, & need to figure what the best option if for `linux`.
