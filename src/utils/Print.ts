@@ -1,18 +1,18 @@
-import chalk from "chalk";
+import chalk from 'chalk'
 
 export class Print {
   /* eslint-disable no-console */
-  static log(...args: any[]) {
-    console.log(...args);
+  static log(...args: unknown[]) {
+    console.log(...args)
   }
-  static error(...args: any[]) {
-    console.error(chalk.redBright("Error: ", ...args));
+  static error(...args: unknown[]) {
+    console.error(chalk.redBright('x'), chalk.white(...args))
   }
-  static info(...args: any[]) {
-    console.info(...args);
+  static info(...args: unknown[]) {
+    console.info(chalk.green('\u2713'), chalk.white(...args))
   }
-  static warn(...args: any[]) {
-    console.warn(...args);
+  static warn(...args: unknown[]) {
+    console.warn(chalk.yellow('!'), chalk.white(...args))
   }
   /* eslint-enable no-console */
 }

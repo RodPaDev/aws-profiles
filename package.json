@@ -1,14 +1,14 @@
 {
-  "name": "awsii",
-  "description": "CLI to use switch between the aws-cli default profile",
-  "version": "0.0.1",
-  "main": "index.js",
+  "name": "aws-profiles",
+  "description": "CLI to manage aws-cli profiles",
+  "version": "1.0.0",
+  "main": "src/index.ts",
   "license": "MIT",
   "scripts": {
-    "package": "yarn build && pkg dist/main.js -c=package.json",
+    "package": "yarn build && pkg build/main.js -c=package.json",
     "build": "NODE_ENV=production webpack",
     "test": "ava",
-    "ts-build": "tsc"
+    "release": "sh release.sh"
   },
   "dependencies": {
     "chalk": "^5.0.1",
@@ -21,7 +21,10 @@
     "@types/inquirer": "^9.0.1",
     "@types/jest": "^29.0.3",
     "@types/node": "^18.7.20",
+    "@typescript-eslint/eslint-plugin": "^5.38.1",
+    "@typescript-eslint/parser": "^5.38.1",
     "ava": "^4.3.3",
+    "eslint": "^8.24.0",
     "ts-jest": "^29.0.2",
     "ts-loader": "^9.4.1",
     "ts-node": "^10.9.1",
@@ -40,7 +43,7 @@
       "node16-linux-x64",
       "node16-linux-arm64"
     ],
-    "outputPath": "package"
+    "outputPath": "package/bin"
   },
   "ava": {
     "extensions": [

@@ -1,0 +1,15 @@
+[default]
+region=me-north-3
+output=me-json
+
+[foo]
+region=foo-east-1
+output=foo-json
+
+[bar]
+region=bar-east-2
+output=bar-json
+
+[me]
+region=me-north-3
+output=me-json

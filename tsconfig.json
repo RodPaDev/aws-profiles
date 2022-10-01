@@ -2,16 +2,19 @@
   "compilerOptions": {
     "target": "ES2016",
     "module": "commonjs",
-    "rootDir": "src",
+    "rootDirs": ["src", "tests"],
     "allowJs": false,
     "checkJs": false,
     "declaration": true,
     "declarationMap": true,
     "outDir": "./dist",
     "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
     "strict": true,
     "noImplicitAny": true,
     "alwaysStrict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
   }
 }
