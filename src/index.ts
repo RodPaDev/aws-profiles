@@ -11,9 +11,7 @@ import config from './config.json'
 import CliConfigManager from './utils/CliConfig'
 import { existsSync } from 'fs'
 
-// const defaultDirPath = AwsProfileManager.getDefaultConfigDirPath()
-const defaultDirPath =
-  '/Users/rodpadev/Desktop/projects/aws-profile-switcher/tests/config'
+const defaultDirPath = AwsProfileManager.getDefaultConfigDirPath()
 
 const cli = new Command()
 const cliConfigManager = new CliConfigManager()
