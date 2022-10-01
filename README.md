@@ -10,19 +10,13 @@ I'm aware I can use named profiles and specify which profile I want to use but I
 
 ## Installation
 
-For now there is no way of installing other than running the JS script with node.
 
-```
-git clone git@github.com:RodPaDev/aws-profiles.git
-yarn build
-node build/main.js [options] [command]
-```
+1. Go to release and download the zip matching your os & architecture
+2. Unzip to `/usr/local/bin` or if you're on windows `C:\Program Files\aws-profiles`
+3. If you're on windows you need to [add the program to path](https://gist.github.com/RodPaDev/e9365fbb6f0c5d8553ceb84ad87110b1.js)
 
-The goal however is to use `pkg` to create binaries to distribute for different platforms.
 
-I also intend on publishing these binaries on `homebrew`, `chocolatey`, & need to figure what the best option if for `linux`.
-
-Perhaps make it installable via `apt` & `pacman` and for distros that use other package managers, I'll probably create a simple install script.
+>I intend on publishing these binaries on `homebrew`, `chocolatey`, & need to figure what the best option if for `linux`.
 
 ## Usage
 
