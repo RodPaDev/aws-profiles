@@ -1,13 +1,14 @@
 {
   "name": "aws-profiles",
   "description": "CLI to manage aws-cli profiles",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "main": "src/index.ts",
   "license": "MIT",
   "scripts": {
     "package": "yarn build && pkg build/main.js -c=package.json",
     "build": "NODE_ENV=production webpack",
-    "test": "ava"
+    "test": "ava",
+    "release": "sh release.sh"
   },
   "dependencies": {
     "chalk": "^5.0.1",
