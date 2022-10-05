@@ -35,6 +35,7 @@ class AwsProfileManager {
   constructor(configDir: string) {
     const config = path.join(configDir, 'config')
     const credenetials = path.join(configDir, 'credentials')
+
     this.configPath = {
       config,
       credenetials
@@ -124,7 +125,7 @@ class AwsProfileManager {
     writeConfig(this.configPath.credenetials, iniCredentials)
   }
 
-  addProfile(
+  upsertProfile(
     credentials: CredentialsObject,
     config: ConfigObject,
     profileName: string
