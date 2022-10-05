@@ -42,6 +42,7 @@ current                Display the current Default Profile's name
 choose                 Choose a profile from an interactive shell
 add                    Add a new aws profile
 delete <profile-name>  Delete a aws profile
+edit                   Edit an existing aws profile
 help [command]         display help for command
 ```
 
