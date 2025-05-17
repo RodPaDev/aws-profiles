@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path"
+	"strconv"
 	"strings"
 
 	"github.com/rodpadev/aws-profiles/utils"
@@ -66,9 +67,8 @@ func ParseAWSProfileData(data [][]byte) map[string]map[string]string {
 
 		key := strings.TrimSpace(string(line[:assignIndex]))
 		value := strings.TrimSpace(string(line[assignIndex+1:]))
-
 		if currentSection == "" {
-			currentSection = "no_category_" + string(i)
+			currentSection = "no_category_" + strconv.Itoa(i)
 			if _, exists := result[currentSection]; !exists {
 				result[currentSection] = map[string]string{}
 			}
