@@ -144,7 +144,7 @@ func (m dummyLayout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m dummyLayout) View() string {
-	return fmt.Sprintf("%s %d", m.debugString, m.size.Height)
+	return fmt.Sprintf("%s: %dx%d", m.debugString, m.size.Width, m.size.Height)
 }
 
 func main() {
