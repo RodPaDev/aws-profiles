@@ -2,6 +2,7 @@ package utils
 
 import (
 	"errors"
+	"io"
 	"os"
 	"os/user"
 	"runtime"
@@ -24,4 +25,25 @@ func GetHomePath() (string, error) {
 	}
 
 	return "", errors.New("Home Directory could not be located.")
+}
+
+func CopyFile(path string, destination string) error {
+	srcFile, err := os.Open(path)
+	if err != nil {
+		return err
+	}
+	defer srcFile.Close()
+
+	dstFile, err := os.Create(destination)
+	if err != nil {
+		return err
+	}
+	defer dstFile.Close()
+
+	_, err = io.Copy(dstFile, srcFile)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

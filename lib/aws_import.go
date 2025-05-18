@@ -2,6 +2,7 @@ package lib
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"os"
 	"path"
@@ -10,6 +11,29 @@ import (
 
 	"github.com/rodpadev/aws-profiles/utils"
 )
+
+func BackupAWSProfileData() error {
+	homeDir, err := utils.GetHomePath()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	dirPath := path.Join(homeDir, ".aws")
+	configPath := path.Join(dirPath, "config")
+	credentialsPath := path.Join(dirPath, "credentials")
+
+	backupConfigPath := fmt.Sprintf("%s.backup", configPath)
+	backupCredentialsPathPath := fmt.Sprintf("%s.backup", credentialsPath)
+
+	if err := utils.CopyFile(configPath, backupConfigPath); err != nil {
+		return err
+	}
+	if err := utils.CopyFile(credentialsPath, backupCredentialsPathPath); err != nil {
+		return err
+	}
+
+	return nil
+}
 
 func LoadAWSProfileData() ([][]byte, error) {
 	homeDir, err := utils.GetHomePath()
