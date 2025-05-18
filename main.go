@@ -6,6 +6,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/rodpadev/aws-profiles/layout"
 )
 
 const (
@@ -33,6 +34,19 @@ func (m layoutModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.WindowSizeMsg:
 		m.width = msg.Width
 		m.height = msg.Height
+
+		computedLayout := layout.ComputeLayout(m.width, m.height)
+
+		m.leftPane, _ = m.leftPane.Update(layout.SizeMsg{
+			Size: layout.PaneSize{Width: computedLayout.LeftPaneWidth, Height: computedLayout.MainHeight - 2},
+		})
+		m.rightPane, _ = m.rightPane.Update(layout.SizeMsg{
+			Size: layout.PaneSize{Width: computedLayout.RightPaneWidth, Height: computedLayout.MainHeight - 2},
+		})
+		m.footer, _ = m.footer.Update(layout.SizeMsg{
+			Size: layout.PaneSize{Width: computedLayout.ScreenWidth - 2, Height: computedLayout.FooterHeight},
+		})
+
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "q", "ctrl+c":
@@ -56,43 +70,42 @@ func updateModel(child tea.Model, msg tea.Msg, cmds []tea.Cmd) (tea.Model, []tea
 }
 
 func (m layoutModel) View() string {
-	heightWithoutBorder := m.height - 2
-	footerVisibleHeight := footerHeight - 1
-	mainHeight := heightWithoutBorder - footerVisibleHeight - 2
+	computedLayout := layout.ComputeLayout(m.width, m.height)
 
 	right := lipgloss.NewStyle().
-		Width(m.width - leftPaneWidth - 6).
-		Height(mainHeight - 2).
+		Width(computedLayout.RightPaneWidth).
+		Height(computedLayout.MainHeight - 2).
 		Border(lipgloss.NormalBorder()).
 		Render(m.rightPane.View())
 
 	left := lipgloss.NewStyle().
-		Width(leftPaneWidth).
-		Height(mainHeight - 2).
+		Width(computedLayout.LeftPaneWidth).
+		Height(computedLayout.MainHeight - 2).
 		Border(lipgloss.NormalBorder()).
 		Render(m.leftPane.View())
 
 	footer := lipgloss.NewStyle().
-		Width(m.width - 2).
-		Height(footerHeight).
+		Width(computedLayout.ScreenWidth - 2).
+		Height(computedLayout.FooterHeight).
 		Border(lipgloss.NormalBorder()).
 		BorderBottom(false).
 		BorderRight(false).
 		BorderLeft(false).
 		Render(m.footer.View())
 
-	topRow := lipgloss.NewStyle().Height(mainHeight).Width(m.width - 2).Render(
-		lipgloss.JoinHorizontal(lipgloss.Top, left, right),
-	)
+	topRow := lipgloss.NewStyle().
+		Height(computedLayout.MainHeight).
+		Width(computedLayout.ScreenWidth - 2).
+		Render(lipgloss.JoinHorizontal(lipgloss.Top, left, right))
 
 	mainRender := lipgloss.JoinVertical(lipgloss.Top, topRow, footer)
 
 	if m.width < 75 || m.height < 25 {
-		mainRender = lipgloss.Place(m.width, heightWithoutBorder, lipgloss.Center, lipgloss.Center, "Too Small! Expand your terminal")
+		mainRender = lipgloss.Place(m.width, computedLayout.HeightAvailable, lipgloss.Center, lipgloss.Center, "Too Small! Expand your terminal")
 	}
 
 	return lipgloss.NewStyle().
-		Height(heightWithoutBorder).
+		Height(computedLayout.HeightAvailable).
 		Width(m.width - 2).
 		Border(lipgloss.NormalBorder()).
 		Render(mainRender)
@@ -115,6 +128,7 @@ func initModel() layoutModel {
 
 type dummyLayout struct {
 	debugString string
+	size        layout.PaneSize
 }
 
 func (m dummyLayout) Init() tea.Cmd {
@@ -122,11 +136,15 @@ func (m dummyLayout) Init() tea.Cmd {
 }
 
 func (m dummyLayout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+	switch msg := msg.(type) {
+	case layout.SizeMsg:
+		m.size = msg.Size
+	}
 	return m, nil
 }
 
 func (m dummyLayout) View() string {
-	return m.debugString
+	return fmt.Sprintf("%s %d", m.debugString, m.size.Height)
 }
 
 func main() {
