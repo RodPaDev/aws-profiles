@@ -179,7 +179,7 @@ func main() {
 	}
 
 	AppState = state.State{
-		Selection: state.Selection{
+		Cursor: state.ProfilePosition{
 			Index: 0,
 			Key:   firstProfile,
 		},

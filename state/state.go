@@ -4,12 +4,13 @@ import (
 	"github.com/rodpadev/aws-profiles/lib"
 )
 
-type Selection struct {
+type ProfilePosition struct {
 	Index int
 	Key   string
 }
 
 type State struct {
-	Selection  Selection
+	Cursor     ProfilePosition
+	Selection  ProfilePosition
 	ProfileMap lib.ProfileMap
 }
