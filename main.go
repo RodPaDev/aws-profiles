@@ -2,17 +2,23 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/rodpadev/aws-profiles/layout"
+	"github.com/rodpadev/aws-profiles/lib"
+	"github.com/rodpadev/aws-profiles/state"
+	"github.com/rodpadev/aws-profiles/tui"
 )
 
 const (
 	leftPaneWidth int = 25
 	footerHeight  int = 4
 )
+
+var AppState state.State
 
 type layoutModel struct {
 	width, height int
@@ -114,8 +120,9 @@ func (m layoutModel) View() string {
 
 func initModel() layoutModel {
 	return layoutModel{
-		leftPane: dummyLayout{
-			debugString: "left",
+		leftPane: &tui.SidebarModel{
+			DebugString: "left",
+			State:       AppState,
 		},
 		rightPane: dummyLayout{
 			debugString: "right",
@@ -148,6 +155,36 @@ func (m dummyLayout) View() string {
 }
 
 func main() {
+
+	data, err := lib.LoadAWSProfileData()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	parsed := lib.ParseAWSProfileData(data)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	profileMap, err := lib.BuildProfileMap(parsed)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var firstProfile string
+	for k := range profileMap {
+		firstProfile = k
+		break
+	}
+
+	AppState = state.State{
+		Selection: state.Selection{
+			Index: 0,
+			Key:   firstProfile,
+		},
+		ProfileMap: profileMap,
+	}
 
 	p := tea.NewProgram(initModel(), tea.WithAltScreen())
 	if _, err := p.Run(); err != nil {

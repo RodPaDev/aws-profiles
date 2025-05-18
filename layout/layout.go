@@ -18,7 +18,7 @@ type LayoutSizes struct {
 func ComputeLayout(screenWidth, screenHeight int) LayoutSizes {
 	const border = 2
 	const footer = 4
-	const left = 25
+	const left = 32
 	const gap = 6 // space between panes (borders, margins, etc)
 
 	heightAvailable := screenHeight - border

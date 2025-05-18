@@ -75,7 +75,12 @@ func ParseAWSProfileData(data [][]byte) map[string]map[string]string {
 
 		// get current section
 		if line[0] == '[' && line[len(line)-1] == ']' {
-			currentSection = string(line[1 : len(line)-1])
+			currentSection = strings.TrimSpace(strings.Replace(string(line[1:len(line)-1]), "profile", "", 1))
+
+			if currentSection == "default" {
+				currentSection = "⚠️ RENAME [awscli default]"
+			}
+
 			if _, exists := result[currentSection]; !exists {
 				result[currentSection] = make(map[string]string)
 			}
