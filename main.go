@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -122,7 +123,7 @@ func initModel() layoutModel {
 	return layoutModel{
 		leftPane: &tui.SidebarModel{
 			DebugString: "left",
-			State:       AppState,
+			State:       &AppState,
 		},
 		rightPane: dummyLayout{
 			debugString: "right",
@@ -151,6 +152,16 @@ func (m dummyLayout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m dummyLayout) View() string {
+	if m.debugString == "right" {
+		if selected, ok := AppState.ProfileMap[AppState.Selection.Key]; ok {
+			if marshall, err := json.MarshalIndent(selected, "", "  "); err != nil {
+				return "no"
+			} else {
+				return string(marshall)
+			}
+
+		}
+	}
 	return fmt.Sprintf("%s: %dx%d", m.debugString, m.size.Width, m.size.Height)
 }
 
