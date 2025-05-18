@@ -11,7 +11,7 @@ import (
 )
 
 type SidebarModel struct {
-	State       state.State
+	State       *state.State
 	DebugString string
 	size        layout.PaneSize
 	profileKeys []string
@@ -32,8 +32,17 @@ func (m *SidebarModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.size = msg.Size
 	case tea.KeyMsg:
 		switch msg.String() {
-		case "enter", "spacebar":
-			m.State.Selection = m.State.Cursor
+		case tea.KeySpace.String(), tea.KeyEnter.String():
+			if m.State.Selection.Index == m.State.Cursor.Index {
+				m.State.Selection.Index = -1
+				m.State.Selection.Key = ""
+			} else {
+				m.State.Selection.Index = m.State.Cursor.Index
+				m.State.Selection.Key = m.profileKeys[m.State.Cursor.Index]
+			}
+		case tea.KeyBackspace.String():
+			m.State.Selection.Index = -1
+			m.State.Selection.Key = ""
 		case "j", tea.KeyDown.String():
 			if m.State.Cursor.Index < len(m.profileKeys)-1 {
 				m.State.Cursor.Index += 1
