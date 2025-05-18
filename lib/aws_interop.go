@@ -6,17 +6,16 @@ import (
 	"log"
 	"os"
 	"path"
+	"reflect"
 	"strconv"
 	"strings"
 
 	"github.com/rodpadev/aws-profiles/utils"
 )
 
-func BackupAWSProfileData() error {
-	homeDir, err := utils.GetHomePath()
-	if err != nil {
-		log.Fatal(err)
-	}
+const DEFAULT_SECTION = "[default]"
+
+func BackupAWSProfileData(homeDir string) error {
 
 	dirPath := path.Join(homeDir, ".aws")
 	configPath := path.Join(dirPath, "config")
@@ -67,6 +66,7 @@ func ParseAWSProfileData(data [][]byte) map[string]map[string]string {
 
 	var currentSection string
 	for i, line := range lines {
+		line = bytes.TrimSpace(line)
 
 		// remove comments and ignore empty liens
 		if len(line) == 0 || line[0] == '#' || line[0] == ';' {
@@ -110,4 +110,48 @@ func ParseAWSProfileData(data [][]byte) map[string]map[string]string {
 
 	return result
 
+}
+
+func EncodeAWSProfileData(selectedProfile Profile) ([2]string, error) {
+	configFile := DEFAULT_SECTION + "\n"
+	credentialsFile := DEFAULT_SECTION + "\n"
+
+	credVal := reflect.ValueOf(selectedProfile.Credential)
+	credType := reflect.TypeOf(selectedProfile.Credential)
+
+	for i := 0; i < credVal.NumField(); i++ {
+		tag := credType.Field(i).Tag.Get("json")
+		value := credVal.Field(i).String()
+		credentialsFile += fmt.Sprintf("%s = %s\n", tag, value)
+	}
+
+	configVal := reflect.ValueOf(selectedProfile.Config)
+	configType := reflect.TypeOf(selectedProfile.Config)
+
+	for i := 0; i < configVal.NumField(); i++ {
+		tag := configType.Field(i).Tag.Get("json")
+		val := configVal.Field(i).String()
+		if val != "" {
+			configFile += fmt.Sprintf("%s = %s\n", tag, val)
+		}
+	}
+
+	return [2]string{configFile, credentialsFile}, nil
+}
+
+func SaveAWSProfileData(homeDir string, awsData [2]string) error {
+
+	configFile := awsData[0]
+	credentialsFile := awsData[1]
+
+	awsDir := path.Join(homeDir, ".aws")
+
+	if err := os.WriteFile(path.Join(awsDir, "config"), []byte(configFile), 0600); err != nil {
+		return err
+	}
+	if err := os.WriteFile(path.Join(awsDir, "credentials"), []byte(credentialsFile), 0600); err != nil {
+		return err
+	}
+
+	return nil
 }
