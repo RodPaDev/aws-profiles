@@ -14,3 +14,8 @@ type State struct {
 	Selection  ProfilePosition
 	ProfileMap lib.ProfileMap
 }
+
+func (s *State) GetCurrentProfile() (lib.Profile, bool) {
+	currentProfile, ok := s.ProfileMap[s.Selection.Key]
+	return currentProfile, ok
+}

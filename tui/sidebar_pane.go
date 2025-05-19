@@ -10,14 +10,14 @@ import (
 	"github.com/rodpadev/aws-profiles/state"
 )
 
-type SidebarModel struct {
+type SidebarPaneModel struct {
 	State       *state.State
 	DebugString string
 	size        layout.PaneSize
 	profileKeys []string
 }
 
-func (m *SidebarModel) Init() tea.Cmd {
+func (m *SidebarPaneModel) Init() tea.Cmd {
 	for k := range m.State.ProfileMap {
 		m.profileKeys = append(m.profileKeys, k)
 	}
@@ -26,7 +26,7 @@ func (m *SidebarModel) Init() tea.Cmd {
 	return nil
 }
 
-func (m *SidebarModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *SidebarPaneModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case layout.SizeMsg:
 		m.size = msg.Size
@@ -65,7 +65,7 @@ func (m *SidebarModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, nil
 }
 
-func (m *SidebarModel) View() string {
+func (m *SidebarPaneModel) View() string {
 	lines := make([]string, len(m.profileKeys))
 
 	for idx, profile := range m.profileKeys {
