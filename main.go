@@ -55,9 +55,6 @@ func (m layoutModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch msg.String() {
-		case tea.KeyBackspace.String():
-			AppState.Selection.Index = -1
-			AppState.Selection.Key = ""
 		case "q", "ctrl+c":
 			return m, tea.Quit
 		}
