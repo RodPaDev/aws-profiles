@@ -55,6 +55,9 @@ func (m layoutModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch msg.String() {
+		case tea.KeyBackspace.String():
+			AppState.Selection.Index = -1
+			AppState.Selection.Key = ""
 		case "q", "ctrl+c":
 			return m, tea.Quit
 		}
@@ -63,8 +66,11 @@ func (m layoutModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	var cmds []tea.Cmd
 
-	m.leftPane, cmds = updateModel(m.leftPane, msg, cmds)
-	m.rightPane, cmds = updateModel(m.rightPane, msg, cmds)
+	if AppState.Selection.Key == "" {
+		m.leftPane, cmds = updateModel(m.leftPane, msg, cmds)
+	} else {
+		m.rightPane, cmds = updateModel(m.rightPane, msg, cmds)
+	}
 	m.footer, cmds = updateModel(m.footer, msg, cmds)
 
 	return m, tea.Batch(cmds...)
