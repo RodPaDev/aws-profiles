@@ -11,7 +11,7 @@ import (
 )
 
 type SidebarPaneModel struct {
-	cursor      state.ProfilePosition
+	cursor      state.Cursor
 	State       *state.State
 	DebugString string
 	size        layout.PaneSize
@@ -32,6 +32,11 @@ func (m *SidebarPaneModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case layout.SizeMsg:
 		m.size = msg.Size
 	case tea.KeyMsg:
+
+		if m.cursor.HandleKey(msg, len(m.profileKeys)) {
+			break
+		}
+
 		switch msg.String() {
 		case tea.KeySpace.String(), tea.KeyEnter.String():
 			if m.State.Selection.Index == m.cursor.Index {
@@ -41,25 +46,7 @@ func (m *SidebarPaneModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 				m.State.Selection.Index = m.cursor.Index
 				m.State.Selection.Key = m.profileKeys[m.cursor.Index]
 			}
-		case tea.KeyBackspace.String():
-			m.State.Selection.Index = -1
-			m.State.Selection.Key = ""
-		case "j", tea.KeyDown.String():
-			if m.cursor.Index < len(m.profileKeys)-1 {
-				m.cursor.Index += 1
-			} else {
-				m.cursor.Index = 0
-			}
-		case "k", tea.KeyUp.String():
-			if m.cursor.Index > 0 {
-				m.cursor.Index -= 1
-			} else {
-				m.cursor.Index = len(m.profileKeys) - 1
-			}
-		case "h", tea.KeyLeft.String():
-			m.cursor.Index = 0
-		case "l", tea.KeyRight.String():
-			m.cursor.Index = len(m.profileKeys) - 1
+
 		}
 
 	}
