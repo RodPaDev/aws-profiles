@@ -11,6 +11,7 @@ import (
 )
 
 type SidebarPaneModel struct {
+	cursor      state.ProfilePosition
 	State       *state.State
 	DebugString string
 	size        layout.PaneSize
@@ -33,32 +34,32 @@ func (m *SidebarPaneModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 		case tea.KeySpace.String(), tea.KeyEnter.String():
-			if m.State.Selection.Index == m.State.Cursor.Index {
+			if m.State.Selection.Index == m.cursor.Index {
 				m.State.Selection.Index = -1
 				m.State.Selection.Key = ""
 			} else {
-				m.State.Selection.Index = m.State.Cursor.Index
-				m.State.Selection.Key = m.profileKeys[m.State.Cursor.Index]
+				m.State.Selection.Index = m.cursor.Index
+				m.State.Selection.Key = m.profileKeys[m.cursor.Index]
 			}
 		case tea.KeyBackspace.String():
 			m.State.Selection.Index = -1
 			m.State.Selection.Key = ""
 		case "j", tea.KeyDown.String():
-			if m.State.Cursor.Index < len(m.profileKeys)-1 {
-				m.State.Cursor.Index += 1
+			if m.cursor.Index < len(m.profileKeys)-1 {
+				m.cursor.Index += 1
 			} else {
-				m.State.Cursor.Index = 0
+				m.cursor.Index = 0
 			}
 		case "k", tea.KeyUp.String():
-			if m.State.Cursor.Index > 0 {
-				m.State.Cursor.Index -= 1
+			if m.cursor.Index > 0 {
+				m.cursor.Index -= 1
 			} else {
-				m.State.Cursor.Index = len(m.profileKeys) - 1
+				m.cursor.Index = len(m.profileKeys) - 1
 			}
 		case "h", tea.KeyLeft.String():
-			m.State.Cursor.Index = 0
+			m.cursor.Index = 0
 		case "l", tea.KeyRight.String():
-			m.State.Cursor.Index = len(m.profileKeys) - 1
+			m.cursor.Index = len(m.profileKeys) - 1
 		}
 
 	}
@@ -72,7 +73,7 @@ func (m *SidebarPaneModel) View() string {
 		prefix := Icons.SidebarCursorInactive
 		style := lipgloss.NewStyle().Width(m.size.Width)
 
-		isActiveIndex := m.State.Cursor.Index == idx
+		isActiveIndex := m.cursor.Index == idx
 		isCurrentSelection := m.State.Selection.Index == idx
 
 		var fg, bg lipgloss.Color

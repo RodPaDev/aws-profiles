@@ -162,7 +162,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	parsed := lib.ParseAWSProfileData(data)
+	parsed, profileCount := lib.ParseAWSProfileData(data)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -173,18 +173,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	var firstProfile string
-	for k := range profileMap {
-		firstProfile = k
-		break
-	}
-
 	AppState = state.State{
-		Cursor: state.ProfilePosition{
-			Index: 0,
-			Key:   firstProfile,
-		},
-		ProfileMap: profileMap,
+		ProfileMap:     profileMap,
+		ProfileMapSize: profileCount,
 	}
 
 	p := tea.NewProgram(initModel(), tea.WithAltScreen())
