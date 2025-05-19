@@ -56,7 +56,7 @@ func LoadAWSProfileData() ([][]byte, error) {
 	return [][]byte{config, credentials}, nil
 }
 
-func ParseAWSProfileData(data [][]byte) map[string]map[string]string {
+func ParseAWSProfileData(data [][]byte) (map[string]map[string]string, int) {
 	result := map[string]map[string]string{}
 
 	combined := append(data[0], '\n')
@@ -65,6 +65,7 @@ func ParseAWSProfileData(data [][]byte) map[string]map[string]string {
 	lines := bytes.Split(combined, []byte{'\n'})
 
 	var currentSection string
+	var profileCount int
 	for i, line := range lines {
 		line = bytes.TrimSpace(line)
 
@@ -83,6 +84,7 @@ func ParseAWSProfileData(data [][]byte) map[string]map[string]string {
 
 			if _, exists := result[currentSection]; !exists {
 				result[currentSection] = make(map[string]string)
+				profileCount += 1
 			}
 			continue
 		}
@@ -113,7 +115,7 @@ func ParseAWSProfileData(data [][]byte) map[string]map[string]string {
 
 	}
 
-	return result
+	return result, profileCount
 
 }
 
