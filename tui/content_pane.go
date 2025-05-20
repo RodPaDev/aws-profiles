@@ -23,20 +23,20 @@ type ManagedInput struct {
 }
 
 type ContentPaneModel struct {
-	cursor                state.Cursor
-	State                 *state.State
-	size                  layout.PaneSize
-	profile               state.ProfilePosition
-	inputs                []ManagedInput
-	modifiedInputs        []int
-	isInputFocusCaptured  bool
-	inputFocusCapturedIdx int
-	inputsInitialized     bool
+	cursor             state.Cursor
+	State              *state.State
+	size               layout.PaneSize
+	profile            state.ProfilePosition
+	inputs             []ManagedInput
+	modifiedInputs     []int
+	isInputFocusLocked bool
+	focusedInputIndex  int
+	inputsInitialized  bool
 }
 
 func (m *ContentPaneModel) BuildInputs(profile lib.Profile) {
-	m.inputFocusCapturedIdx = -1
-	m.isInputFocusCaptured = false
+	m.focusedInputIndex = -1
+	m.isInputFocusLocked = false
 	m.inputs = make([]ManagedInput, 5)
 	var t ManagedInput
 
@@ -83,12 +83,12 @@ func (m *ContentPaneModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case tea.KeyMsg:
 		key := msg.String()
 
-		if m.isInputFocusCaptured {
+		if m.isInputFocusLocked {
 			cmd := m.updateFocusedInput(msg)
 			if key == tea.KeyEscape.String() {
-				m.modifiedInputs = append(m.modifiedInputs, m.inputFocusCapturedIdx)
-				m.isInputFocusCaptured = false
-				m.inputFocusCapturedIdx = -1
+				m.modifiedInputs = append(m.modifiedInputs, m.focusedInputIndex)
+				m.isInputFocusLocked = false
+				m.focusedInputIndex = -1
 			}
 			return m, cmd
 		}
@@ -97,12 +97,12 @@ func (m *ContentPaneModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		switch key {
 		case tea.KeyEnter.String():
-			m.isInputFocusCaptured = true
-			m.inputFocusCapturedIdx = m.cursor.Index
+			m.isInputFocusLocked = true
+			m.focusedInputIndex = m.cursor.Index
 
 			cmds := make([]tea.Cmd, len(m.inputs))
 			for i := range m.inputs {
-				if i == m.inputFocusCapturedIdx {
+				if i == m.focusedInputIndex {
 					m.inputs[i].input.TextStyle = focusedStyle
 					cmds[i] = m.inputs[i].input.Focus()
 				} else {
@@ -122,7 +122,7 @@ func (m *ContentPaneModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m *ContentPaneModel) updateFocusedInput(msg tea.Msg) tea.Cmd {
-	idx := m.inputFocusCapturedIdx
+	idx := m.focusedInputIndex
 	updatedInput, cmd := m.inputs[idx].input.Update(msg)
 	m.inputs[idx].input = updatedInput
 	return cmd
@@ -148,7 +148,7 @@ func (m *ContentPaneModel) View() string {
 		}
 
 		var name string
-		if m.cursor.Index == i && m.inputFocusCapturedIdx != i {
+		if m.cursor.Index == i && m.focusedInputIndex != i {
 			name = nameStyle.
 				Background(Colors.Primary).
 				Foreground(Colors.OnPrimary).
@@ -157,7 +157,7 @@ func (m *ContentPaneModel) View() string {
 			name = nameStyle.Render(field.Name)
 		}
 
-		if m.inputFocusCapturedIdx == i {
+		if m.focusedInputIndex == i {
 			field.input.TextStyle = focusedStyle
 		} else {
 			field.input.TextStyle = noStyle
