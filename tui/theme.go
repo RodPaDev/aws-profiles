@@ -15,7 +15,9 @@ var Colors = struct {
 var Icons = struct {
 	SidebarCursorActive   string
 	SidebarCursorInactive string
+	ModifiedMarker      string
 }{
 	SidebarCursorActive:   "▶",
 	SidebarCursorInactive: " ",
+	ModifiedMarker:      "●",
 }

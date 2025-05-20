@@ -39,3 +39,11 @@ func (s *State) IsFieldEdited(profileKey string, field string) bool {
 	return originalField != editedField
 
 }
+
+func (s *State) IsProfileEdited(profileKey string) bool {
+	if s.EditedProfileMap == nil {
+		return false
+	}
+	_, ok := s.EditedProfileMap[profileKey]
+	return ok
+}

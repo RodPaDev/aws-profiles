@@ -1,6 +1,8 @@
 package tui
 
 import (
+	"fmt"
+
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -11,7 +13,7 @@ import (
 
 var (
 	focusedStyle = lipgloss.NewStyle().Foreground(Colors.Primary)
-	contentStyle = lipgloss.NewStyle().PaddingLeft(2)
+	contentStyle = lipgloss.NewStyle().PaddingLeft(1)
 	noStyle      = lipgloss.NewStyle()
 )
 
@@ -160,9 +162,11 @@ func (m *ContentPaneModel) View() string {
 	var lines []string
 	for idx, input := range m.inputs {
 		nameStyle := noStyle
+		prefix := " "
 
 		if m.State.IsFieldEdited(m.State.Selection.Key, input.field) {
 			nameStyle = nameStyle.Bold(true).Underline(true)
+			prefix = Icons.ModifiedMarker
 		}
 
 		var name string
@@ -183,7 +187,9 @@ func (m *ContentPaneModel) View() string {
 
 		line := lipgloss.JoinHorizontal(
 			lipgloss.Left,
-			lipgloss.NewStyle().Render(name+": "),
+			lipgloss.NewStyle().Render(
+				fmt.Sprintf("%s %s: ", prefix, name),
+			),
 			input.input.View(),
 		)
 
