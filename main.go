@@ -131,31 +131,11 @@ func initModel() layoutModel {
 			DebugString: "right",
 			State:       &AppState,
 		},
-		footer: dummyLayout{
-			debugString: "footer",
+		footer: &tui.FooterPaneModel{
+			DebugString: "footer",
+			State:       &AppState,
 		},
 	}
-}
-
-type dummyLayout struct {
-	debugString string
-	size        layout.PaneSize
-}
-
-func (m dummyLayout) Init() tea.Cmd {
-	return nil
-}
-
-func (m dummyLayout) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	switch msg := msg.(type) {
-	case layout.SizeMsg:
-		m.size = msg.Size
-	}
-	return m, nil
-}
-
-func (m dummyLayout) View() string {
-	return fmt.Sprintf("%s: %dx%d", m.debugString, m.size.Width, m.size.Height)
 }
 
 func main() {
