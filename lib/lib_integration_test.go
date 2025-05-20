@@ -99,7 +99,7 @@ func TestIntegrationFlow(t *testing.T) {
 	}
 
 	// Parse AWS profile data
-	parsedData, _ := ParseAWSProfileData(data)
+	parsedData := ParseAWSProfileData(data)
 
 	// Verify parsed data
 	if len(parsedData) != 3 { // default, profile dev, profile prod, dev, prod

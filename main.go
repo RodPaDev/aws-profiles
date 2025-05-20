@@ -57,18 +57,28 @@ func (m layoutModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "q", "ctrl+c":
 			return m, tea.Quit
+		case ":":
+			AppState.IsCommandModeActive = true
+			return m, nil
+		case tea.KeyEscape.String():
+			if AppState.IsCommandModeActive {
+				AppState.IsCommandModeActive = false
+				return m, nil
+			}
 		}
 
 	}
 
 	var cmds []tea.Cmd
-
-	if AppState.Selection.Key == "" {
-		m.leftPane, cmds = updateModel(m.leftPane, msg, cmds)
+	if !AppState.IsCommandModeActive {
+		if AppState.Selection.Key == "" {
+			m.leftPane, cmds = updateModel(m.leftPane, msg, cmds)
+		} else {
+			m.rightPane, cmds = updateModel(m.rightPane, msg, cmds)
+		}
 	} else {
-		m.rightPane, cmds = updateModel(m.rightPane, msg, cmds)
+		m.footer, cmds = updateModel(m.footer, msg, cmds)
 	}
-	m.footer, cmds = updateModel(m.footer, msg, cmds)
 
 	return m, tea.Batch(cmds...)
 }
@@ -110,7 +120,13 @@ func (m layoutModel) View() string {
 	mainRender := lipgloss.JoinVertical(lipgloss.Top, topRow, footer)
 
 	if m.width < 75 || m.height < 25 {
-		mainRender = lipgloss.Place(m.width, computedLayout.HeightAvailable, lipgloss.Center, lipgloss.Center, "Too Small! Expand your terminal")
+		mainRender = lipgloss.Place(
+			m.width,
+			computedLayout.HeightAvailable,
+			lipgloss.Center,
+			lipgloss.Center,
+			"Too Small! Expand your terminal",
+		)
 	}
 
 	return lipgloss.NewStyle().
