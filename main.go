@@ -170,7 +170,8 @@ func main() {
 	}
 
 	AppState = state.State{
-		ProfileMap: profileMap,
+		ProfileMap:       profileMap,
+		EditedProfileMap: lib.ProfileMap{},
 	}
 
 	p := tea.NewProgram(initModel(), tea.WithAltScreen())

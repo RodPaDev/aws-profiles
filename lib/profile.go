@@ -38,3 +38,35 @@ func BuildProfileMap(data map[string]map[string]string) (ProfileMap, error) {
 
 	return profiles, nil
 }
+
+func (p *Profile) SetField(field, value string) {
+	switch field {
+	case "name":
+		p.Name = value
+	case "aws_access_key_id":
+		p.Credential.AccessKey = value
+	case "aws_secret_access_key":
+		p.Credential.SecretKey = value
+	case "region":
+		p.Config.Region = value
+	case "output":
+		p.Config.Output = value
+	}
+}
+
+func (p Profile) GetField(field string) string {
+	switch field {
+	case "name":
+		return p.Name
+	case "aws_access_key_id":
+		return p.Credential.AccessKey
+	case "aws_secret_access_key":
+		return p.Credential.SecretKey
+	case "region":
+		return p.Config.Region
+	case "output":
+		return p.Config.Output
+	default:
+		return ""
+	}
+}

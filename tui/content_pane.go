@@ -1,8 +1,6 @@
 package tui
 
 import (
-	"slices"
-
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -20,6 +18,7 @@ var (
 type ManagedInput struct {
 	Name  string
 	input textinput.Model
+	field string
 }
 
 type ContentPaneModel struct {
@@ -28,7 +27,6 @@ type ContentPaneModel struct {
 	size               layout.PaneSize
 	profile            state.ProfilePosition
 	inputs             []ManagedInput
-	modifiedInputs     []int
 	isInputFocusLocked bool
 	focusedInputIndex  int
 	inputsInitialized  bool
@@ -49,21 +47,26 @@ func (m *ContentPaneModel) BuildInputs(profile lib.Profile) {
 
 		switch i {
 		case 0:
+			t.field = "name"
 			t.Name = "Profile Name"
 			t.input.CharLimit = 32
 			t.input.SetValue(profile.Name)
 		case 1:
+			t.field = "aws_access_key_id"
 			t.Name = "Access Key"
 			t.input.SetValue(profile.Credential.AccessKey)
 		case 2:
+			t.field = "aws_secret_access_key"
 			t.Name = "Secret Key"
 			t.input.EchoMode = textinput.EchoPassword
 			t.input.EchoCharacter = 0
 			t.input.SetValue(profile.Credential.SecretKey)
 		case 3:
+			t.field = "output"
 			t.Name = "Output"
 			t.input.SetValue(profile.Config.Output)
 		case 4:
+			t.field = "region"
 			t.Name = "Region"
 			t.input.SetValue(profile.Config.Region)
 		}
@@ -86,7 +89,20 @@ func (m *ContentPaneModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.isInputFocusLocked {
 			cmd := m.updateFocusedInput(msg)
 			if key == tea.KeyEscape.String() {
-				m.modifiedInputs = append(m.modifiedInputs, m.focusedInputIndex)
+				modifiedValue := m.inputs[m.focusedInputIndex].input.Value()
+				profile, ok := m.State.GetCurrentProfile()
+				if ok && modifiedValue != profile.GetField(m.inputs[m.focusedInputIndex].field) {
+
+					key := m.State.Selection.Key
+					edited, exists := m.State.EditedProfileMap[key]
+					if !exists {
+						edited = profile
+					}
+
+					edited.SetField(m.inputs[m.focusedInputIndex].field, modifiedValue)
+
+					m.State.EditedProfileMap[key] = edited
+				}
 				m.isInputFocusLocked = false
 				m.focusedInputIndex = -1
 			}
@@ -113,6 +129,8 @@ func (m *ContentPaneModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, tea.Batch(cmds...)
 
 		case tea.KeyEscape.String():
+			// exit content pane
+			// todo: this should be handled in the main loop
 			m.State.Selection.Index = -1
 			m.State.Selection.Key = ""
 		}
@@ -140,33 +158,33 @@ func (m *ContentPaneModel) View() string {
 	}
 
 	var lines []string
-	for i, field := range m.inputs {
+	for idx, input := range m.inputs {
 		nameStyle := noStyle
 
-		if slices.Contains(m.modifiedInputs, i) {
+		if m.State.IsFieldEdited(m.State.Selection.Key, input.field) {
 			nameStyle = nameStyle.Bold(true).Underline(true)
 		}
 
 		var name string
-		if m.cursor.Index == i && m.focusedInputIndex != i {
+		if m.cursor.Index == idx && m.focusedInputIndex != idx {
 			name = nameStyle.
 				Background(Colors.Primary).
 				Foreground(Colors.OnPrimary).
-				Render(field.Name)
+				Render(input.Name)
 		} else {
-			name = nameStyle.Render(field.Name)
+			name = nameStyle.Render(input.Name)
 		}
 
-		if m.focusedInputIndex == i {
-			field.input.TextStyle = focusedStyle
+		if m.focusedInputIndex == idx {
+			input.input.TextStyle = focusedStyle
 		} else {
-			field.input.TextStyle = noStyle
+			input.input.TextStyle = noStyle
 		}
 
 		line := lipgloss.JoinHorizontal(
 			lipgloss.Left,
 			lipgloss.NewStyle().Render(name+": "),
-			field.input.View(),
+			input.input.View(),
 		)
 
 		lines = append(lines, line)
