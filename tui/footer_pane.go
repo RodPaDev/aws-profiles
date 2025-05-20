@@ -9,9 +9,8 @@ import (
 )
 
 type FooterPaneModel struct {
-	size        layout.PaneSize
-	DebugString string
-	State       *state.State
+	size  layout.PaneSize
+	State *state.State
 }
 
 func (m *FooterPaneModel) Init() tea.Cmd {

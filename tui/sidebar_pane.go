@@ -13,7 +13,6 @@ import (
 type SidebarPaneModel struct {
 	cursor      state.Cursor
 	State       *state.State
-	DebugString string
 	size        layout.PaneSize
 	profileKeys []string
 }

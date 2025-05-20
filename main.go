@@ -140,16 +140,13 @@ func (m layoutModel) View() string {
 func initModel() layoutModel {
 	return layoutModel{
 		leftPane: &tui.SidebarPaneModel{
-			DebugString: "left",
-			State:       &AppState,
+			State: &AppState,
 		},
 		rightPane: &tui.ContentPaneModel{
-			DebugString: "right",
-			State:       &AppState,
+			State: &AppState,
 		},
 		footer: &tui.FooterPaneModel{
-			DebugString: "footer",
-			State:       &AppState,
+			State: &AppState,
 		},
 	}
 }

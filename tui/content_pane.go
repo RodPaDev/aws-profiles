@@ -25,7 +25,6 @@ type ManagedInput struct {
 type ContentPaneModel struct {
 	cursor                state.Cursor
 	State                 *state.State
-	DebugString           string
 	size                  layout.PaneSize
 	profile               state.ProfilePosition
 	inputs                []ManagedInput
