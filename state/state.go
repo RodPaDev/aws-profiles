@@ -10,10 +10,10 @@ type ProfilePosition struct {
 }
 
 type State struct {
-	Selection            ProfilePosition
-	ProfileMap           lib.ProfileMap
-	ProfileMapSize       int
-	ModifiedProfiledKeys []string
+	Selection           ProfilePosition
+	ProfileMap          lib.ProfileMap
+	EditedProfileMap    lib.ProfileMap
+	IsCommandModeActive bool
 }
 
 func (s *State) GetCurrentProfile() (lib.Profile, bool) {

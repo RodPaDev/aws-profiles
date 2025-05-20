@@ -56,7 +56,7 @@ func LoadAWSProfileData() ([][]byte, error) {
 	return [][]byte{config, credentials}, nil
 }
 
-func ParseAWSProfileData(data [][]byte) (map[string]map[string]string, int) {
+func ParseAWSProfileData(data [][]byte) map[string]map[string]string {
 	result := map[string]map[string]string{}
 
 	combined := append(data[0], '\n')
@@ -115,7 +115,7 @@ func ParseAWSProfileData(data [][]byte) (map[string]map[string]string, int) {
 
 	}
 
-	return result, profileCount
+	return result
 
 }
 
