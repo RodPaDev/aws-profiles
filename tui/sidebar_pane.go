@@ -58,7 +58,7 @@ func (m *SidebarPaneModel) View() string {
 	for idx, profile := range m.profileKeys {
 		prefix := Icons.SidebarCursorInactive
 		style := lipgloss.NewStyle().Width(m.size.Width)
-		profileStyle := lipgloss.NewStyle()
+
 		suffix := ""
 
 		isActiveIndex := m.cursor.Index == idx
@@ -77,11 +77,18 @@ func (m *SidebarPaneModel) View() string {
 		case isCurrentSelection:
 			fg = lipgloss.Color(Colors.OnPrimary)
 			bg = lipgloss.Color(Colors.Primary)
-		case m.State.IsProfileEdited(profile):
-			profileStyle = style.Bold(true).Underline(true)
-			suffix = Icons.ModifiedMarker
+
 		default:
 			fg = lipgloss.Color(Colors.Text)
+		}
+
+		profileStyle := style
+		if m.State.IsProfileEdited(profile) {
+			profileStyle = style.Bold(true).
+				Underline(true).
+				Background(bg).
+				Foreground(fg)
+			suffix = Icons.ModifiedMarker
 		}
 
 		style = style.Foreground(fg)
@@ -92,7 +99,7 @@ func (m *SidebarPaneModel) View() string {
 			style = style.UnsetBackground()
 		}
 
-		lines[idx] = style.Render(fmt.Sprintf(" %s %s", prefix, profileStyle.Render(profile+suffix)))
+		lines[idx] = style.Render(fmt.Sprintf(" %s %s", prefix, profileStyle.Render(profile+" "+suffix)))
 	}
 
 	return lipgloss.NewStyle().
